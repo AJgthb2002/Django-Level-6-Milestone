@@ -34,7 +34,9 @@
           >
             <div class="flex flex-col mr-12">
               <div class="flex text-lg font-semibold">{{task.title}}</div>
-              <div class="flex text-gray-500 text-sm">Mon 20 Jan</div>
+              <div class="flex text-gray-500 text-sm">
+                {{task.created_date|date:"D j M"}}
+              </div>
             </div>
             <div class="flex justify-center">
               <button
@@ -67,7 +69,9 @@
               <div class="flex text-red-500 line-through text-lg font-semibold">
                 {{task.title}}
               </div>
-              <div class="flex text-gray-500 text-sm">Mon 20 Jan</div>
+              <div class="flex text-gray-500 text-sm">
+                {{task.created_date|date:"D j M"}}
+              </div>
             </div>
             <div class="flex justify-center">
               <button
