@@ -72,8 +72,10 @@ class GenericCompletedTasksView(AuthorisedTasksGenerator,ListView):
         "total_cnt": len(tasks_list)+len(completed_list), "username": self.request.user}
 
 def updatePriorities(user,priority_new):
+    # print("priority cascade function running")
     tasksToUpdate = []
-    all_task_list = Task.objects.select_for_update().filter(deleted=False,completed=False,user=user,priority__gte=priority_new).order_by('priority')
+    # all_task_list = Task.objects.select_for_update().filter(deleted=False,completed=False,user=user,priority__gte=priority_new).order_by('priority')
+    all_task_list = Task.objects.filter(deleted=False,completed=False,user=user,priority__gte=priority_new).order_by('priority')
     
     for task in all_task_list:
         if task.priority == priority_new:
@@ -88,6 +90,7 @@ class GenericTaskCreateView(CreateView):
     success_url="/tasks"
 
     def form_valid(self, form):
+        
         priority_new = form.cleaned_data["priority"]
         user = self.request.user
         tasks = Task.objects.filter(deleted=False, user= self.request.user, completed=False, priority=priority_new)
@@ -114,9 +117,10 @@ class GenericTaskUpdateView(AuthorisedTasksGenerator, UpdateView):
     def form_valid(self, form):
         priority_new = form.cleaned_data["priority"]
         user = self.request.user
-        tasks = Task.objects.filter(deleted=False, user= self.request.user, completed=False, priority=priority_new)
-        if tasks.exists():
-            updatePriorities(user , priority_new)
+        if 'priority' in form.changed_data:
+            tasks = Task.objects.filter(deleted=False, user= self.request.user, completed=False, priority=priority_new)
+            if tasks.exists():
+                updatePriorities(user , priority_new)
 
         self.object = form.save()
         self.object.user = self.request.user
